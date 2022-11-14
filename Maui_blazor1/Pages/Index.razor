@@ -1,0 +1,21 @@
+﻿@page "/"
+
+<h1>Hello, Damien!</h1>
+<p>Should I go to confession?</p>
+<p>@Answer</p>
+
+
+<button @onclick="Blah"> press the button Damo</button>
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+@code {
+
+    public string Answer { get; set; } = "no answered";
+    // Demonstrates how a parent component can supply parameters
+    public void Blah()
+    {
+        this.Answer = $"YES!! {DateTime.Now.ToString()}";
+    }
+
+}

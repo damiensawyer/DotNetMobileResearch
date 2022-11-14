@@ -1,0 +1,18 @@
+﻿@using System.Reactive.Linq
+@namespace Components
+<span class="ms-2 badge rounded-pill bg-danger">@message</span>
+
+@code
+{
+    private string message = string.Empty;
+
+
+    protected override void OnInitialized()
+    {
+        Observable.Interval(TimeSpan.FromMilliseconds(1)).Subscribe(t => // Unless I'm wrong, this seems to be counting every 10 ms, not 1
+        {
+            message = $"{t / 100d:0.00} seconds"; 
+            InvokeAsync(StateHasChanged);
+        });
+    }
+}
