@@ -1,0 +1,14 @@
+﻿@page "/binding"
+@using System.Reactive.Linq
+<h3>Binding</h3>
+
+<h3>Two-way data binding</h3>
+<label>Hello @labelText !!</label>
+<br />
+<input @oninput="EventCallback.Factory.CreateBinder<string>(this, __value => labelText = __value, labelText)" value="@labelText" />
+<input @oninput="EventCallback.Factory.CreateBinder<string>(this, __value => labelText = __value, labelText)" value="@labelText" />
+
+@functions {
+    private string labelText = "World";
+}
+

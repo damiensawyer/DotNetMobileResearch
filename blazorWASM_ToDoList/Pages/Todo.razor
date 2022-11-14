@@ -1,0 +1,77 @@
+﻿@page "/todo"
+@using System.Reactive.Linq
+@using Components
+<PageTitle>To do not</PageTitle>
+<h3>To Do (@todos.Count(todo => !todo.IsDone))</h3>
+<p>
+    <span class="badge rounded-pill bg-primary">@message</span>
+</p>
+
+
+<button @onclick="SelectAll" class="btn-sm btn-info mb-4">Select All</button>
+<button @onclick="SelectNone" class="btn-sm btn-info mb-4">Select None</button>
+<ul style="padding-left: 0">
+    @foreach (var todo in todos)
+    {
+        <p class="mb-1">
+            <input type="checkbox" @bind="todo.IsDone"/>
+            <input @bind="todo.Title"/>
+            <button class="btn btn-danger" @onclick=@(() => RemoveItem(todo))>X</button>
+        </p>
+    }
+
+</ul>
+
+<input placeholder="Something todo" @bind="newTodo"/>
+<button @onclick="AddToDo">Add todo</button>
+
+
+<p>
+    <Timer/>
+</p>
+
+@code {
+    private List<TodoItem> todos = new();
+    private string message = string.Empty;
+    private string? newTodo;
+
+
+    protected override void OnInitialized()
+    {
+        foreach (var i in Enumerable.Range(1, 5))
+        {
+            this.todos.Add(new TodoItem() { Title = $"Item {i}" });
+        }
+
+        var o = Observable.Interval(TimeSpan.FromSeconds(2)).Take(3);
+        o.Subscribe(x =>
+        {
+            todos.Add(new TodoItem() { Title = $"Item {x} added by timer" });
+            InvokeAsync(StateHasChanged);
+        });
+
+        Observable.Interval(TimeSpan.FromMilliseconds(1)).Subscribe(t =>
+        {
+            message = $"{(decimal)t / 100:0.00}  seconds";
+            InvokeAsync(StateHasChanged);
+        });
+    }
+
+
+    private void AddToDo()
+    {
+        if (!string.IsNullOrWhiteSpace(newTodo))
+        {
+            todos.Add(new TodoItem { Title = newTodo });
+            newTodo = string.Empty;
+        }
+    }
+
+    private void RemoveItem(TodoItem item) => todos.Remove(item);
+
+
+    private void SelectAll() => todos.ForEach(x => x.IsDone = true);
+
+    private void SelectNone() => todos.ForEach(x => x.IsDone = false);
+
+}
